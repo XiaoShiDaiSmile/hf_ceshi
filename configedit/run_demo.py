@@ -1,6 +1,7 @@
 import os,sys,unittest,time,shutil,webbrowser
 sys.path.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'config'))
-from config import setting
+print(sys.path)
+# from config import setting
 from package.HTMLTestRunner import HTMLTestRunner
 from lib.newreport import NewReport
 from lib.sendemail import SendMail
