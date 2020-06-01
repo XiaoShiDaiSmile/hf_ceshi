@@ -1,5 +1,6 @@
 import os,sys
 sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+print("setting")
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
