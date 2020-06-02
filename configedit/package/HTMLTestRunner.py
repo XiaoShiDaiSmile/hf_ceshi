@@ -96,7 +96,7 @@ import sys
 import time
 import unittest
 from xml.sax import saxutils
-reload(sys)
+reload(sys)1
 sys.setdefaultencoding('utf8')
 
 
