@@ -1,4 +1,4 @@
-import os,sys,configparser
+import os,sys,ConfigParser
 from config import setting
 
 
