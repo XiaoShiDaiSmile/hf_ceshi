@@ -1,3 +1,4 @@
+#coding=UTF-8
 import os,sys,unittest,xlrd,ConfigParser
 from config import setting
 from lib.readconfig import ReadConfig
@@ -13,7 +14,7 @@ def run_case(all_case,test_report=setting.TEST_REPORT):
 	now = time.strftime('%Y-%m-%d %H-%M-%S')
 	filename = test_report+'\\'+now+'-'+'report.html'
 	fb = open(filename,'wb')
-	runner = HTMLTestRunner(stream=fb,title="UI界面自动化测试报告",description="this is description",charset="utf-8")
+	runner = HTMLTestRunner(stream=fb,title="UI界面自动化测试报告",description="this is description")
 	runner.run(all_case)
 	#webbrowser.open_new_tab(filename)
 	fb.close()
