@@ -4,7 +4,7 @@ class Api_demo(unittest2.TestCase):
 
 
 	def test_demo1(self):
-		print("test_demo1")
+		print(str("demo"))
 
 
 if __name__ == '__main__':
