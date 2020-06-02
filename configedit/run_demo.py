@@ -1,13 +1,13 @@
 #coding=UTF-8
-import os,sys,unittest,xlrd,ConfigParser
+import os,sys,unittest2,xlrd,ConfigParser
 from config import setting
 from lib.readconfig import ReadConfig
 from package.HTMLTestRunner import HTMLTestRunner
 
 
 def add_case(test_path=setting.TEST_CASE):
-	testunit=unittest.TestSuite()
-	print(unittest.loader.defaultTestLoader().discover(test_path,pattern="**test.py",top_level_dir=None))
+	testunit=unittest2.TestSuite()
+	print(unittest2.defaultTestLoader().discover(test_path,pattern="**test.py",top_level_dir=None))
 	#discover = unittest.defaultTestLoader.discover(test_path,pattern="**test.py",top_level_dir=None)
 	#return discover
 
