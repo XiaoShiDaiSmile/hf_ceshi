@@ -6,7 +6,8 @@ from package.HTMLTestRunner import HTMLTestRunner
 
 
 def add_case(test_path=setting.TEST_CASE):
-	print(unittest.defaultTestLoader.discover(test_path,pattern="**test.py",top_level_dir=None))
+	testunit=unittest.TestSuite()
+	#print(unittest.defaultTestLoader.discover(test_path,pattern="**test.py",top_level_dir=None))
 	#discover = unittest.defaultTestLoader.discover(test_path,pattern="**test.py",top_level_dir=None)
 	#return discover
 
