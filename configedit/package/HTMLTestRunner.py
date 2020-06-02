@@ -625,7 +625,7 @@ class HTMLTestRunner(Template_mixin):
     def run(self, test):
         "Run the given test case or test suite."
         result = _TestResult(self.verbosity)
-        test(result)
+        test
         self.stopTime = datetime.datetime.now()
         self.generateReport(test, result)
         print >>sys.stderr, '\nTime Elapsed: %s' % (self.stopTime-self.startTime)
