@@ -97,6 +97,10 @@ import time
 import unittest
 from xml.sax import saxutils
 
+reload(sys)
+
+sys.setdefaultencoding('utf8')
+
 
 # ------------------------------------------------------------------------
 # The redirectors below are used to capture output during testing. Output
