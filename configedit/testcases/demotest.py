@@ -1,11 +1,11 @@
-import os,sys,unittest2
+import os,sys,unittest
 
-class Api_demo(unittest2.TestCase):
+class Api_demo(unittest.TestCase):
 
 
 	def test_demo1(self):
-		print(str("demo"))
+		print("demo")
 
 
 if __name__ == '__main__':
-	unittest2.main()
+	unittest.main()
