@@ -6,9 +6,9 @@ from package.HTMLTestRunner import HTMLTestRunner
 
 
 def add_case(test_path=setting.TEST_CASE):
-	print(unittest.defaultTestLoader)
-	discover = unittest.TestLoader().discover(test_path,pattern="**test.py")
-	return discover
+	print(unittest.defaultTestLoad)
+	#discover = unittest.defaultTestLoader.discover(test_path,pattern="**test.py")
+	#return discover
 
 
 def run_case(all_case,test_report=setting.TEST_REPORT):
@@ -26,5 +26,5 @@ def run_case(all_case,test_report=setting.TEST_REPORT):
 
 if __name__ == '__main__':
 	cases = add_case()
-	run_case(cases)
+	#run_case(cases)
 
