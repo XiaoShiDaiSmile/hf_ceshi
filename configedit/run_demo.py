@@ -17,7 +17,7 @@ def run_case(all_case,test_report=setting.TEST_REPORT):
 	fb = open(filename,'wb')
 	runner = HTMLTestRunner(stream=fb,title="UI界面自动化测试报告",description="this is description")
 	runner.run(all_case)
-	webbrowser.open_new_tab(filename)
+	#webbrowser.open_new_tab(filename)
 	fb.close()
 	# report = new_report(setting.TEST_REPORT)
 	# print(report)
