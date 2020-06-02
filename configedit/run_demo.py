@@ -1,30 +1,30 @@
 #coding=UTF-8
 import os,sys,unittest2,xlrd,ConfigParser,time,webbrowser
-from config import setting
-from lib.readconfig import ReadConfig
-from package.HTMLTestRunner import HTMLTestRunner
+# from config import setting
+# from lib.readconfig import ReadConfig
+# from package.HTMLTestRunner import HTMLTestRunner
 
 
-def add_case(test_path=setting.TEST_CASE):
-	testunit=unittest2.TestSuite()
-	discover = unittest2.loader.TestLoader().discover(test_path,pattern="**test.py",top_level_dir=None)
-	return discover
+# def add_case(test_path=setting.TEST_CASE):
+# 	testunit=unittest2.TestSuite()
+# 	discover = unittest2.loader.TestLoader().discover(test_path,pattern="**test.py",top_level_dir=None)
+# 	return discover
 
 
-def run_case(all_case,test_report=setting.TEST_REPORT):
-	now = time.strftime('%Y-%m-%d %H-%M-%S')
-	filename = test_report+'\\'+now+'-'+'report.html'
-	fb = open(filename,'wb')
-	runner = HTMLTestRunner(stream=fb,title="UI界面自动化测试报告",description="this is description")
-	runner.run(all_case)
-	#webbrowser.open_new_tab(filename)
-	fb.close()
-	# report = new_report(setting.TEST_REPORT)
-	# print(report)
-	# send_email(report)
+# def run_case(all_case,test_report=setting.TEST_REPORT):
+# 	now = time.strftime('%Y-%m-%d %H-%M-%S')
+# 	filename = test_report+'\\'+now+'-'+'report.html'
+# 	fb = open(filename,'wb')
+# 	runner = HTMLTestRunner(stream=fb,title="UI界面自动化测试报告",description="this is description")
+# 	runner.run(all_case)
+# 	#webbrowser.open_new_tab(filename)
+# 	fb.close()
+# 	# report = new_report(setting.TEST_REPORT)
+# 	# print(report)
+# 	# send_email(report)
 
 
-if __name__ == '__main__':
-	cases = add_case()
-	run_case(cases)
+# if __name__ == '__main__':
+# 	cases = add_case()
+# 	run_case(cases)
 
