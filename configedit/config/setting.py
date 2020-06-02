@@ -1,5 +1,5 @@
 import os,sys
-sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+sys.path.append("\\opt\\tomcat\\apache-tomcat-8.5.55\\webapps\\workspace\\Demo\\configedit\\config")
 print(os.path.split(os.path.realpath(__file__))[0])
 print("setting")
 
