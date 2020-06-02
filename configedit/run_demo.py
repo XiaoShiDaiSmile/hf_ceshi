@@ -1,7 +1,5 @@
 import os,sys
 from time import sleep
-par_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(par_dir)
-# from config import setting
-import config
+
+print(os.path.split(os.path.realpath(__file__))[0])
 

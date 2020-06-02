@@ -1,6 +1,7 @@
 import os,sys
-par_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(par_dir)
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+print(os.path.split(os.path.realpath(__file__))[0])
+print("setting")
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
