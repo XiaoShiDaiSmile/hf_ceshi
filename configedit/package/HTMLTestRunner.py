@@ -1,4 +1,3 @@
-#coding=utf-8
 """
 A TestRunner for use with the Python unit testing framework. It
 generates a HTML report to show the result at a glance.
@@ -19,10 +18,9 @@ HTMLTestRunner is a counterpart to unittest's TextTestRunner. E.g.
 
     # output to a file
     fp = file('my_report.html', 'wb')
-    c = HTMLTestRunner.HTMLTestRunner(
+    runner = HTMLTestRunner.HTMLTestRunner(
                 stream=fp,
                 title='My unit test',
-                tester='My Name',
                 description='This demonstrates the report output by HTMLTestRunner.'
                 )
 
@@ -71,15 +69,7 @@ __version__ = "0.8.2"
 
 
 """
-Change History  --YinJia
-
-Version 0.8.2.1
-* 支持中文、汉化
-* 增加通过分类显示、测试人员、通过率的展示
-* 测试结果status的通过率展示
-* 增加总计栏目通过率展示
-* 增加截图展示
-* 增加饼图数据统计展示
+Change History
 
 Version 0.8.2
 * Show output inline instead of popup window (Viorel Lupu).
@@ -101,8 +91,7 @@ Version in 0.7.1
 # TODO: simplify javascript using ,ore than 1 class in the class attribute?
 
 import datetime
-#import StringIO
-import io
+import StringIO
 import sys
 import time
 import unittest
@@ -183,15 +172,13 @@ class Template_mixin(object):
     """
 
     STATUS = {
-    0: '通过',
-    1: '失败',
-    2: '错误',
+    0: 'pass',
+    1: 'fail',
+    2: 'error',
     }
-    #增加DEFAULT_TESTER变量  --YinJia
-    DEFAULT_TITLE = '单元测试报告'
+
+    DEFAULT_TITLE = 'Unit Test Report'
     DEFAULT_DESCRIPTION = ''
-    DEFAULT_TESTER = '最棒QA'
-    
 
     # ------------------------------------------------------------------------
     # HTML Template
@@ -209,15 +196,14 @@ class Template_mixin(object):
 <script language="javascript" type="text/javascript"><!--
 output_list = Array();
 
-/* 增加显示通过分类列表  --YinJia */
-/* level - 0:Summary; 1:Failed; 2:Pass; 3:All */
+/* level - 0:Summary; 1:Failed; 2:All */
 function showCase(level) {
     trs = document.getElementsByTagName("tr");
     for (var i = 0; i < trs.length; i++) {
         tr = trs[i];
         id = tr.id;
         if (id.substr(0,2) == 'ft') {
-            if (level == 2 || level == 0) {
+            if (level < 1) {
                 tr.className = 'hiddenRow';
             }
             else {
@@ -225,11 +211,11 @@ function showCase(level) {
             }
         }
         if (id.substr(0,2) == 'pt') {
-            if (level < 2) {
-                tr.className = 'hiddenRow';
+            if (level > 1) {
+                tr.className = '';
             }
             else {
-                tr.className = '';
+                tr.className = 'hiddenRow';
             }
         }
     }
@@ -285,46 +271,6 @@ function html_escape(s) {
     s = s.replace(/>/g,'&gt;');
     return s;
 }
-/* 增加饼图显示  --YinJia */
-function drawCircle(pass, fail, error){
-    var color = ["#6c6","#c60","#c00"];
-    var data = [pass,fail,error];
-    var text_arr = ["pass", "fail", "error"];
-
-    var canvas = document.getElementById("circle");
-    var ctx = canvas.getContext("2d");
-    var startPoint=0;
-    var width = 20, height = 10;
-    var posX = 112 * 2 + 20, posY = 30;
-    var textX = posX + width + 5, textY = posY + 10;
-    for(var i=0;i<data.length;i++){
-        ctx.fillStyle = color[i];
-        ctx.beginPath();
-        ctx.moveTo(112,84);
-        ctx.arc(112,84,84,startPoint,startPoint+Math.PI*2*(data[i]/(data[0]+data[1]+data[2])),false);
-        ctx.fill();
-        startPoint += Math.PI*2*(data[i]/(data[0]+data[1]+data[2]));
-        ctx.fillStyle = color[i];
-        ctx.fillRect(posX, posY + 20 * i, width, height);
-        ctx.moveTo(posX, posY + 20 * i);
-        ctx.font = 'bold 14px';
-        ctx.fillStyle = color[i];
-        var percent = text_arr[i] + ":"+data[i];
-        ctx.fillText(percent, textX, textY + 20 * i);
-
-    }
-}
-
-function show_shots(obj) {
-    obj.nextElementSibling.style.display="block";
-
-}
-
-function close_shots(obj) {
-    obj.parentElement.style.display="none";
-}
-
-
 
 /* obsoleted by detail in <div>
 function showOutput(id, name) {
@@ -341,11 +287,7 @@ function showOutput(id, name) {
 }
 */
 --></script>
-<div class="piechart">
-    <div>
-        <canvas id="circle" width="350" height="168" </canvas>
-    </div>
-</div>
+
 %(heading)s
 %(report)s
 %(ending)s
@@ -370,8 +312,8 @@ pre         { }
 
 /* -- heading ---------------------------------------------------------------------- */
 h1 {
-    font-size: 16pt;
-    color: gray;
+	font-size: 16pt;
+	color: gray;
 }
 .heading {
     margin-top: 0ex;
@@ -396,26 +338,6 @@ a.popup_link:hover {
     color: red;
 }
 
-.img{
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-    border: 2px solid #777;
-}
-
-.screenshots {
-    z-index: 100;
-    position:absolute;
-    left: 23%;
-    top: 20%;
-    display: none;
-}
-.close_shots {
-    position:absolute;
-    top:0; left:98%;
-    z-index:99;
-    width:20px;
-}
 .popup_window {
     display: none;
     position: relative;
@@ -427,7 +349,7 @@ a.popup_link:hover {
     font-family: "Lucida Console", "Courier New", Courier, monospace;
     text-align: left;
     font-size: 8pt;
-    width: 800px;
+    width: 500px;
 }
 
 }
@@ -435,119 +357,26 @@ a.popup_link:hover {
 #show_detail_line {
     margin-top: 3ex;
     margin-bottom: 1ex;
-    background:#333;
 }
-#show_detial_line a{
-    height: 32px;
-    padding: 0 15px;
-    display:inline-block;
-}
-#show_detail_line .resume{
-    background:#2db7f5;
-    border-color:#2db7f5;
-    color:#fff;
-    height: 32px;
-    line-height:32px;
-    padding: 0 15px;
-    display:inline-block;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: color .2s linear,background-color .2s linear,border .2s linear,box-shadow .2s linear;
-    text-decoration:none;
-}
-#show_detail_line .resume:hover{
-    background-color: #57c5f7;
-    border-color: #57c5f7;
-}
-
-#show_detail_line .total{
-    background:#19be6b;
-    border-color:#19be6b;
-    color:#fff;
-    height: 32px;
-    line-height:32px;
-    padding: 0 15px;
-    display:inline-block;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: color .2s linear,background-color .2s linear,border .2s linear,box-shadow .2s linear;
-    text-decoration:none;
-}
-#show_detail_line .total:hover{
-    background-color: #47cb89;
-    border-color: #47cb89;
-}
-
-
-
-#show_detail_line .pass{
-    background-color: #f90;
-    border-color: #f90;
-    color:#fff;
-    height: 32px;
-    line-height:32px;
-    padding: 0 15px;
-    display:inline-block;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: color .2s linear,background-color .2s linear,border .2s linear,box-shadow .2s linear;
-    text-decoration:none;
-}
-#show_detail_line .resume:pass{
-    background-color: #ffad33;
-    border-color: #ffad33;
-}
-
-
-#show_detail_line .fail{
-    background-color: #ed4014;
-    border-color: #ed4014;
-    color:#fff;
-    height: 32px;
-    line-height:32px;
-    padding: 0 15px;
-    display:inline-block;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: color .2s linear,background-color .2s linear,border .2s linear,box-shadow .2s linear;
-    text-decoration:none;
-}
-#show_detail_line .fail:hover{
-    background-color: #f16643;
-    border-color: #f16643;
-}
-
-
 #result_table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
-    border: 1px solid #dcdee2;
+    border: 1px solid #777;
 }
-#result_table #header_row{
+#header_row {
     font-weight: bold;
     color: white;
     background-color: #777;
 }
-
-#result_table #header_row td{
-    height: 20px;
-    font-weight: bold;
-    color: #515a6e;
-    background-color: #f8f8f9;
-    padding: 8px 18px;
-}
-
-
 #result_table td {
-    height: 48px;
-    border: 1px solid #dcdee2;
-    padding: 2px 18px;
+    border: 1px solid #777;
+    padding: 2px;
 }
 #total_row  { font-weight: bold; }
 .passClass  { background-color: #6c6; }
 .failClass  { background-color: #c60; }
 .errorClass { background-color: #c00; }
-.passCase   { color: #6c6; font-weight: bold;}
+.passCase   { color: #6c6; }
 .failCase   { color: #c60; font-weight: bold; }
 .errorCase  { color: #c00; font-weight: bold; }
 .hiddenRow  { display: none; }
@@ -556,14 +385,6 @@ a.popup_link:hover {
 
 /* -- ending ---------------------------------------------------------------------- */
 #ending {
-}
-.piechart{
-    position:absolute;  ;
-    top:20px;
-    left:350px;
-    width: 200px;
-    float: left;
-    display:  inline;
 }
 
 </style>
@@ -593,11 +414,10 @@ a.popup_link:hover {
     #
 
     REPORT_TMPL = """
-<p id='show_detail_line'>显示
-<a href='javascript:showCase(0)' class="resume">概要</a>
-<a href='javascript:showCase(3)' class="total">所有[%(count)s]</a>
-<a href='javascript:showCase(2)' class="pass">通过[%(Pass)s]</a>
-<a href='javascript:showCase(1)' class="fail">失败[%(fail)s]</a>
+<p id='show_detail_line'>Show
+<a href='javascript:showCase(0)'>Summary</a>
+<a href='javascript:showCase(1)'>Failed</a>
+<a href='javascript:showCase(2)'>All</a>
 </p>
 <table id='result_table'>
 <colgroup>
@@ -607,31 +427,25 @@ a.popup_link:hover {
 <col align='right' />
 <col align='right' />
 <col align='right' />
-<col align='right' />
 </colgroup>
 <tr id='header_row'>
-    <td>用例集/测试用例</td>
-    <td>总计</td>
-    <td>通过</td>
-    <td>失败</td>
-    <td>错误</td>
-    <td>视图</td>
-    <td>错误截图</td>
+    <td>Test Group/Test case</td>
+    <td>Count</td>
+    <td>Pass</td>
+    <td>Fail</td>
+    <td>Error</td>
+    <td>View</td>
 </tr>
 %(test_list)s
 <tr id='total_row'>
-    <td>总计</td>
+    <td>Total</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
     <td>%(error)s</td>
-    <td>通过率：%(passrate)s</td>
     <td>&nbsp;</td>
 </tr>
 </table>
-<script>
-    drawCircle(%(Pass)s, %(fail)s, %(error)s)
-</script>
 """ # variables: (test_list, count, Pass, fail, error)
 
     REPORT_CLASS_TMPL = r"""
@@ -641,43 +455,42 @@ a.popup_link:hover {
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
     <td>%(error)s</td>
-    <td><a href="javascript:showClassDetail('%(cid)s',%(count)s)">详情</a></td>
-    <td>&nbsp;</td>
+    <td><a href="javascript:showClassDetail('%(cid)s',%(count)s)">Detail</a></td>
 </tr>
 """ # variables: (style, desc, count, Pass, fail, error, cid)
 
+
     REPORT_TEST_WITH_OUTPUT_TMPL = r"""
-    <tr id='%(tid)s' class='%(Class)s'>
-        <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
-        <td colspan='5' align='center'>
+<tr id='%(tid)s' class='%(Class)s'>
+    <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
+    <td colspan='5' align='center'>
 
-        <!--css div popup start-->
-        <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_%(tid)s')" >
-            %(status)s</a>
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_%(tid)s')" >
+        %(status)s</a>
 
-        <div id='div_%(tid)s' class="popup_window">
-            <div style='text-align: right; color:red;cursor:pointer'>
-            <a onfocus='this.blur();' onclick="document.getElementById('div_%(tid)s').style.display = 'none' " >
-               [x]</a>
-            </div>
-            <pre>
-            %(script)s
-            </pre>
+    <div id='div_%(tid)s' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_%(tid)s').style.display = 'none' " >
+           [x]</a>
         </div>
-        <!--css div popup end-->
+        <pre>
+        %(script)s
+        </pre>
+    </div>
+    <!--css div popup end-->
+
     </td>
-    <td>%(img)s</td>
 </tr>
-""" # variables: (tid, Class, style, desc, status, img)
+""" # variables: (tid, Class, style, desc, status)
 
 
     REPORT_TEST_NO_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
     <td colspan='5' align='center'>%(status)s</td>
-    <td>%(img)s</td>
 </tr>
-""" # variables: (tid, Class, style, desc, status, img)
+""" # variables: (tid, Class, style, desc, status)
 
 
     REPORT_TEST_OUTPUT_TMPL = r"""
@@ -701,7 +514,7 @@ class _TestResult(TestResult):
     # note: _TestResult is a pure representation of results.
     # It lacks the output and reporting ability compares to unittest._TextTestResult.
 
-    def __init__(self, verbosity=2):
+    def __init__(self, verbosity=1):
         TestResult.__init__(self)
         self.stdout0 = None
         self.stderr0 = None
@@ -718,16 +531,12 @@ class _TestResult(TestResult):
         #   stack trace,
         # )
         self.result = []
-        # 增加通过率、状态
-        self.passrate = float(0)
-        self.status = 0
+
 
     def startTest(self, test):
         TestResult.startTest(self, test)
-        test.img = ""
         # just one buffer for both stdout and stderr
-        #self.outputBuffer = StringIO.StringIO()
-        self.outputBuffer = io.StringIO()
+        self.outputBuffer = StringIO.StringIO()
         stdout_redirector.fp = self.outputBuffer
         stderr_redirector.fp = self.outputBuffer
         self.stdout0 = sys.stdout
@@ -758,7 +567,6 @@ class _TestResult(TestResult):
 
     def addSuccess(self, test):
         self.success_count += 1
-        self.status = 0
         TestResult.addSuccess(self, test)
         output = self.complete_output()
         self.result.append((0, test, output, ''))
@@ -769,19 +577,12 @@ class _TestResult(TestResult):
         else:
             sys.stderr.write('.')
 
-    # 增加错误截图功能  --YinJia
     def addError(self, test, err):
         self.error_count += 1
-        self.status = 1
         TestResult.addError(self, test, err)
         _, _exc_str = self.errors[-1]
         output = self.complete_output()
         self.result.append((2, test, output, _exc_str))
-        try:
-            driver = getattr(test,"driver")
-            test.img = driver.get_screenshot_as_base64()
-        except AttributeError:
-            test.img = ""
         if self.verbosity > 1:
             sys.stderr.write('E  ')
             sys.stderr.write(str(test))
@@ -789,19 +590,12 @@ class _TestResult(TestResult):
         else:
             sys.stderr.write('E')
 
-    # 增加失败截图功能  --YinJia
     def addFailure(self, test, err):
         self.failure_count += 1
-        self.status = 1
         TestResult.addFailure(self, test, err)
         _, _exc_str = self.failures[-1]
         output = self.complete_output()
         self.result.append((1, test, output, _exc_str))
-        try:
-            driver = getattr(test,"driver")
-            test.img = driver.get_screenshot_as_base64()
-        except AttributeError:
-            test.img = ""
         if self.verbosity > 1:
             sys.stderr.write('F  ')
             sys.stderr.write(str(test))
@@ -809,11 +603,11 @@ class _TestResult(TestResult):
         else:
             sys.stderr.write('F')
 
-# 增加tester  -- YinJia
+
 class HTMLTestRunner(Template_mixin):
     """
     """
-    def __init__(self, stream=sys.stdout, verbosity=2, title=None, description=None,tester=None):
+    def __init__(self, stream=sys.stdout, verbosity=1, title=None, description=None):
         self.stream = stream
         self.verbosity = verbosity
         if title is None:
@@ -824,10 +618,7 @@ class HTMLTestRunner(Template_mixin):
             self.description = self.DEFAULT_DESCRIPTION
         else:
             self.description = description
-        if tester is None:
-            self.tester = self.DEFAULT_TESTER
-        else:
-            self.tester = tester
+
         self.startTime = datetime.datetime.now()
 
 
@@ -837,8 +628,7 @@ class HTMLTestRunner(Template_mixin):
         test(result)
         self.stopTime = datetime.datetime.now()
         self.generateReport(test, result)
-        #print >>sys.stderr, '\nTime Elapsed: %s' % (self.stopTime-self.startTime)
-        print(sys.stderr, '\nTime Elapsed: %s' % (self.stopTime - self.startTime))
+        print >>sys.stderr, '\nTime Elapsed: %s' % (self.stopTime-self.startTime)
         return result
 
 
@@ -849,15 +639,14 @@ class HTMLTestRunner(Template_mixin):
         classes = []
         for n,t,o,e in result_list:
             cls = t.__class__
-            #if not rmap.has_key(cls):
-            if not cls in rmap:
+            if not rmap.has_key(cls):
                 rmap[cls] = []
                 classes.append(cls)
             rmap[cls].append((n,t,o,e))
         r = [(cls, rmap[cls]) for cls in classes]
         return r
 
-    #增加passrate通过率  --YinJia
+
     def getReportAttributes(self, result):
         """
         Return report attributes as a list of (name, value).
@@ -866,21 +655,17 @@ class HTMLTestRunner(Template_mixin):
         startTime = str(self.startTime)[:19]
         duration = str(self.stopTime - self.startTime)
         status = []
-        status.append('总共 %s' % (result.success_count + result.failure_count + result.error_count))
-        if result.success_count: status.append('通过 %s' % result.success_count)
-       # status.append(u'<span class="tj passCase">Pass</span>%s' % result.success_count)
-        if result.failure_count: status.append('失败 %s' % result.failure_count)
-        if result.error_count:   status.append('错误 %s' % result.error_count  )
+        if result.success_count: status.append('Pass %s'    % result.success_count)
+        if result.failure_count: status.append('Failure %s' % result.failure_count)
+        if result.error_count:   status.append('Error %s'   % result.error_count  )
         if status:
             status = ' '.join(status)
-            self.passrate = str("%.2f%%" % (float(result.success_count) / float(result.success_count + result.failure_count + result.error_count) * 100))
         else:
             status = 'none'
         return [
-            ('测试人员', self.tester),
-            ('开始时间', startTime),
-            ('合计耗时', duration),
-            ('测试结果', status + " 通过率 = "+self.passrate),
+            ('Start Time', startTime),
+            ('Duration', duration),
+            ('Status', status),
         ]
 
 
@@ -905,7 +690,7 @@ class HTMLTestRunner(Template_mixin):
     def _generate_stylesheet(self):
         return self.STYLESHEET_TMPL
 
-    #增加tester  --YinJia
+
     def _generate_heading(self, report_attrs):
         a_lines = []
         for name, value in report_attrs:
@@ -918,7 +703,6 @@ class HTMLTestRunner(Template_mixin):
             title = saxutils.escape(self.title),
             parameters = ''.join(a_lines),
             description = saxutils.escape(self.description),
-            tester = saxutils.escape(self.tester),
         )
         return heading
 
@@ -955,14 +739,13 @@ class HTMLTestRunner(Template_mixin):
 
             for tid, (n,t,o,e) in enumerate(cls_results):
                 self._generate_report_test(rows, cid, tid, n, t, o, e)
-        #增加passrate   --YinJia
+
         report = self.REPORT_TMPL % dict(
             test_list = ''.join(rows),
-            count = str(result.success_count + result.failure_count + result.error_count),
+            count = str(result.success_count+result.failure_count+result.error_count),
             Pass = str(result.success_count),
             fail = str(result.failure_count),
             error = str(result.error_count),
-            passrate = self.passrate,
         )
         return report
 
@@ -980,15 +763,13 @@ class HTMLTestRunner(Template_mixin):
         if isinstance(o,str):
             # TODO: some problem with 'string_escape': it escape \n and mess up formating
             # uo = unicode(o.encode('string_escape'))
-            #uo = o.decode('latin-1')
-            uo = o
+            uo = o.decode('latin-1')
         else:
             uo = o
         if isinstance(e,str):
             # TODO: some problem with 'string_escape': it escape \n and mess up formating
             # ue = unicode(e.encode('string_escape'))
-            #ue = e.decode('latin-1')
-            ue = e
+            ue = e.decode('latin-1')
         else:
             ue = e
 
@@ -996,24 +777,14 @@ class HTMLTestRunner(Template_mixin):
             id = tid,
             output = saxutils.escape(uo+ue),
         )
-        # 增加显示截图功能   --YinJia
-        if t.img:
-            img = """
-                    <a href="#" onclick="show_shots(this)">显示截图</a>
-                    <div class="screenshots">
-                    <a  class="close_shots" onclick="close_shots(this)">X</a>
-                    <img src="data:image/jpg;base64,%s" class="img"/>
-                    </div>""" % t.img
-        else:
-            img = """"""
+
         row = tmpl % dict(
             tid = tid,
             Class = (n == 0 and 'hiddenRow' or 'none'),
-            style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'passCase'),
+            style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'none'),
             desc = desc,
             script = script,
             status = self.STATUS[n],
-            img = img,
         )
         rows.append(row)
         if not has_output:
