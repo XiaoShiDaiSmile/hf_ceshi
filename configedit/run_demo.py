@@ -1,6 +1,7 @@
 #coding=UTF-8
-import os,sys,unittest,xlrd,ConfigParser
+import os,sys,xlrd,ConfigParser
 from config import setting
+from unittest import discover
 from lib.readconfig import ReadConfig
 from package.HTMLTestRunner import HTMLTestRunner
 
