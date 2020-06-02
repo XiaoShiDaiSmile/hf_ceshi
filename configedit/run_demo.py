@@ -1,5 +1,5 @@
 #coding=UTF-8
-import os,sys,unittest2,xlrd,ConfigParser
+import os,sys,unittest2,xlrd,ConfigParser,time
 from config import setting
 from lib.readconfig import ReadConfig
 from package.HTMLTestRunner import HTMLTestRunner
