@@ -1,6 +1,6 @@
 #coding=UTF-8
 import os,sys,unittest2,xlrd,ConfigParser,time,webbrowser
-# from config import setting
+from config import setting
 # from lib.readconfig import ReadConfig
 # from package.HTMLTestRunner import HTMLTestRunner
 
