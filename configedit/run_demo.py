@@ -5,7 +5,7 @@ from time import sleep
 sys.path.append('/Demo/configedit/config')
 # print(os.path.join(os.path.split(os.path.realpath(__file__))[0],'config'))
 # print(os.path.split(os.path.realpath(__file__))[0])
-# print(sys.path)
+print(sys.path)
 from config import setting
 
 print(setting.TEST_CASE)
