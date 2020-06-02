@@ -1,7 +1,6 @@
 import os,sys
-sys.path.append(os.path.split(os.path.realpath(__file__))[0])
-sys.path.append("/configedit/")
-print("setting")
+par_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(par_dir)
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
